@@ -1,8 +1,8 @@
 const { assert } = require("chai");
 
 require('chai')
-.user(require('chai-as-promised'))
-.should()
+  .use(require('chai-as-promised'))
+  .should()
 
 const Market_items = artifacts.require("./Market_items.sol");
 
@@ -47,9 +47,15 @@ contract('Market_items', ([deployer, seller, buyer]) => {
             assert.equal(event.owner, seller, 'is correct')
             assert.equal(event.purchased, false, ' purchased is correct')
         
-        //FAILURE
+        //FAILURE :product must have a name
+      await await market_items.createProduct('', web3.utils.toWei('1', 'Ether'), { from: seller }).should.be.rejected;
+
+        // FAILURE: Product must have a price
+        await await marketplace.createProduct('iPhone X', 0, { from: seller }).should.be.rejected;
+
+
         })
-        
+
     })
 
 

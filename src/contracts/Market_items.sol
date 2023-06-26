@@ -32,7 +32,7 @@ contract Market_items {
     function createProduct(string memory _name, uint _price) public {
 
         //Require a name
-        require(bytes(name).length > 0);
+        require(bytes(_name).length > 0);
 
         //Require a valid price
         require(_price > 0);
