@@ -61,9 +61,18 @@ contract Market_items {
         //Fetch the owner
         address payable _seller = _product.owner;
  
-        //make sure product is valid
+        //make sure product is valid id
+        require(_product.id > 0 && _product.id < productCount);
+
+        //Reqire that there is enough Ether in the transaction
+        require(msg.value >= _product.price);
+
+        //Require that the product has not been purchased already
+        require(_product.purchased);
         
- 
+        //Reuire that the buyer is not the seller
+        require(_seller != msg.sender);
+
         //Transfer ownership to the buyer
         _product.owner = msg.sender;
  

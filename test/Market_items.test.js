@@ -92,6 +92,9 @@ contract('Market_items', ([deployer, seller, buyer]) => {
             const expectedBalance = oldSellerbalance.add(price)
             assert.equal(newSellerBalance.toString(), expectedBalance.toString())
             
+            //FAILURE : 
+
+
         })
 
     })
