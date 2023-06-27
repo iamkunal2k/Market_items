@@ -64,6 +64,11 @@ contract('Market_items', ([deployer, seller, buyer]) => {
           })
 
         it('sells products', async () => {
+            //Track the seller balance before purchase
+            let oldSellerbalance
+            oldSellerbalance = await web3.eth.getBalance(seller)
+            oldSellerbalance = new web3.utils.BN(oldSellerbalance)
+
             //SUCCRSS: Buyer makes purchase
             result = await market_items.purchaseProduct(productCount, {from : buyer, value : web3.utils.toWei('1', 'Ether')})
             
@@ -75,7 +80,16 @@ contract('Market_items', ([deployer, seller, buyer]) => {
             assert.equal(event.owner, buyer, 'is correct')
             assert.equal(event.purchased, true, ' purchased is correct')
         
-        
+            // Check that seller received funds
+            let newSellerBalance
+            newSellerBalance = await web3.eth.getBalance(seller)
+            newSellerBalance = new web3.utils.BN(newSellerBalance)
+
+            let price
+            price = web3.utils.toWei('1', 'Ether')
+            price = new web3.utils.BN(price)
+            
+            console.log(oldSellerbalance, newSellerBalance, price)
         })
 
     })
