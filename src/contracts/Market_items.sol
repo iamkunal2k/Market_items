@@ -12,15 +12,23 @@ contract Market_items {
         uint id;
         string name;
         uint price;
-        address owner;
-        bool purchase;
+        address payable owner;
+        bool purchased;
     }
 
     event ProductCreated(
         uint id, 
         string name,
         uint price,
-        address owner,
+        address payable owner,
+        bool purchased
+    );
+
+    event ProductPurchased(
+        uint id, 
+        string name,
+        uint price,
+        address payable owner,
         bool purchased
     );
 
@@ -44,6 +52,32 @@ contract Market_items {
         
         //trigger an event
         emit ProductCreated(productCount, _name, _price, msg.sender, false);
+    }
+
+    function purchaseProduct(uint _id) public payable{
+        //Fetch the product
+        Product memory _product = products[_id];
+
+        //Fetch the owner
+        address payable _seller = _product.owner;
+ 
+        //make sure product is valid
+        
+ 
+        //Transfer ownership to the buyer
+        _product.owner = msg.sender;
+ 
+        //Mark as purchased
+        _product.purchased = true;
+ 
+        //update the product
+        products[_id] = _product;
+        //Pay the seller sending them Ether
+        address(_seller).transfer(msg.value);
+
+        //Trigger an event
+        emit ProductPurchased(productCount, _product.name, _product.price, msg.sender, true);
+
     }
 }
 
