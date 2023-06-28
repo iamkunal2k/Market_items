@@ -1,8 +1,30 @@
 import React, { Component } from 'react';
+import Web3 from 'web3';
 import logo from '../logo.png';
 import './App.css';
 
 class App extends Component {
+
+  async componentWillMount() {
+    await this.loadWeb3()
+  }
+
+  async loadWeb3() {
+      // Modern dapp browsers...
+      if (window.ethereum) {
+          window.web3 = new Web3(ethereum);
+          await ethereum.enable();
+      }
+      // Legacy dapp browsers...
+      else if (window.web3) {
+          window.web3 = new Web3(web3.currentProvider);
+      }
+      // Non-dapp browsers...
+      else {
+          window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!');
+      }
+  };
+
   render() {
     return (
       <div>
@@ -13,7 +35,7 @@ class App extends Component {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Dapp University
+            Blockchain Market Items
           </a>
         </nav>
         <div className="container-fluid mt-5">
