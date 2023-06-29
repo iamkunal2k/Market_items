@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Web3 from 'web3'
-import logo from '../logo.png';
 import './App.css';
 import Market_items from '../abis/Market_items.json'
 import Navbar from './Navbar'
@@ -39,6 +38,8 @@ class App extends Component {
     if (networkData) {
       const market_items = web3.eth.Contract(Market_items.abi, networkData.address)
       this.setState({ market_items })
+      const ProductCount = await market_items.methods.productCount().call()    // call() to read data
+      console.log(ProductCount.toString())
       this.setState({ loading: false })
     }
     else {
@@ -58,8 +59,8 @@ class App extends Component {
   }
 
   createProduct(name, price) {
-    this.state.loading({ loading : true })
-    this.state.market_items.methods.createProduct(name, price).send({ from : this.state.account })
+    this.setState({ loading : true })
+    this.state.market_items.methods.createProduct(name, price).send({ from : this.state.account })  
     .once('receipt', (receipt) => {
       this.setState({ loading : false })
     })
