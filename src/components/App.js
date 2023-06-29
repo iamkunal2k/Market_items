@@ -1,43 +1,64 @@
 import React, { Component } from 'react';
-import Web3 from 'web3';
+import Web3 from 'web3'
 import logo from '../logo.png';
 import './App.css';
+import Market_items from '../abis/Market_items.json'
+import Navbar from './Navbar'
 
 class App extends Component {
 
   async componentWillMount() {
     await this.loadWeb3()
+    await this.loadBlockchainData()
   }
 
   async loadWeb3() {
-      // Modern dapp browsers...
-      if (window.ethereum) {
-          window.web3 = new Web3(ethereum);
-          await ethereum.enable();
-      }
-      // Legacy dapp browsers...
-      else if (window.web3) {
-          window.web3 = new Web3(web3.currentProvider);
-      }
-      // Non-dapp browsers...
-      else {
-          window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!');
-      }
-  };
+    if (window.ethereum) {
+      window.web3 = new Web3(window.ethereum)
+      await window.ethereum.enable()
+    }
+    else if (window.web3) {
+      window.web3 = new Web3(window.web3.currentProvider)
+    }
+    else {
+      window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!')
+    }
+  }
+
+  async loadBlockchainData() {
+    const web3 = window.web3
+
+    // Steps to load the smart Contract in your webpage
+    //load account
+    const accounts = await web3.eth.getAccounts()
+    this.setState({ account: accounts[0] })
+    const networkId = await web3.eth.net.getId()
+    const networkData = Market_items.networks[networkId]
+
+    if (networkData) {
+      const market_items = web3.eth.Contract(Market_items.abi, networkData.address)
+      console.log(market_items)
+    }
+    else {
+      window.alert("Market_item contract not deployed to detected network.")
+    }
+  }
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      account: '',
+      ProductCount: 0,
+      products: [],
+      loading: true
+
+    }
+  }
 
   render() {
     return (
       <div>
-        <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-          <a
-            className="navbar-brand col-sm-3 col-md-2 mr-0"
-            href="http://www.dappuniversity.com/bootcamp"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Blockchain Market Items
-          </a>
-        </nav>
+        <Navbar account={this.state.account} />
         <div className="container-fluid mt-5">
           <div className="row">
             <main role="main" className="col-lg-12 d-flex text-center">
