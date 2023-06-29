@@ -4,6 +4,7 @@ import logo from '../logo.png';
 import './App.css';
 import Market_items from '../abis/Market_items.json'
 import Navbar from './Navbar'
+import Main from './Main';
 
 class App extends Component {
 
@@ -37,7 +38,8 @@ class App extends Component {
 
     if (networkData) {
       const market_items = web3.eth.Contract(Market_items.abi, networkData.address)
-      console.log(market_items)
+      this.setState({ market_items })
+      this.setState({ loading: false })
     }
     else {
       window.alert("Market_item contract not deployed to detected network.")
@@ -51,9 +53,18 @@ class App extends Component {
       ProductCount: 0,
       products: [],
       loading: true
-
     }
+    this.createProduct = this.createProduct.bind(this)    // ** Important (1)
   }
+
+  createProduct(name, price) {
+    this.state.loading({ loading : true })
+    this.state.market_items.methods.createProduct(name, price).send({ from : this.state.account })
+    .once('receipt', (receipt) => {
+      this.setState({ loading : false })
+    })
+  }
+
 
   render() {
     return (
@@ -61,29 +72,10 @@ class App extends Component {
         <Navbar account={this.state.account} />
         <div className="container-fluid mt-5">
           <div className="row">
-            <main role="main" className="col-lg-12 d-flex text-center">
-              <div className="content mr-auto ml-auto">
-                <a
-                  href="http://www.dappuniversity.com/bootcamp"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <img src={logo} className="App-logo" alt="logo" />
-                </a>
-                <h1>Dapp University Starter Kit</h1>
-                <p>
-                  Edit <code>src/components/App.js</code> and save to reload.
-                </p>
-                <a
-                  className="App-link"
-                  href="http://www.dappuniversity.com/bootcamp"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  LEARN BLOCKCHAIN <u><b>NOW! </b></u>
-                </a>
-              </div>
-            </main>
+            <main role="main" className="col-lg-12 d-flex">
+              { this.state.loading ? <div id="loader" className="text-center"><p className="text-center">Loading...</p></div> 
+              : <Main createProduct ={this.createProduct} /> }    {/* Important (1) */} 
+            </main>            
           </div>
         </div>
       </div>
