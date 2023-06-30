@@ -45,15 +45,27 @@ class Main extends Component {
                         </tr>
                     </thead>
                     <tbody id="productList">
-                        { this.props.products.map((product, key) => {
-                            return(
+                        {this.props.products.map((product, key) => {
+                            return (
                                 <tr key={key}>
-                                <th scope="row">{ product.id.toString() }</th>
-                                <td>{ product.name }</td>
-                                <td>{ window.web3.utils.fromWei(product.price.toString(), 'Ether') } Eth</td>
-                                <td>{ product.owner }</td>
-                                <td><button className="buyButton">Buy</button></td>
-                            </tr>
+                                    <th scope="row">{product.id.toString()}</th>
+                                    <td>{product.name}</td>
+                                    <td>{window.web3.utils.fromWei(product.price.toString(), 'Ether')} Eth</td>
+                                    <td>{product.owner}</td>
+                                    <td>
+                                        {!product.purchased   // if product is not purchased
+                                            ? <button
+                                                name={product.id}
+                                                value={product.price}
+                                                onClick={(event) => {
+                                                    this.props.purchaseProduct(event.target.name, event.target.value)
+                                                }}
+                                            >
+                                                Buy
+                                            </button>
+                                            : null        //if product is already purchased
+                                        }</td>
+                                </tr>
                             )
                         })}
                     </tbody>
